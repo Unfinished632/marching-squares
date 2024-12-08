@@ -29,6 +29,7 @@ class Engine{
 
     bool programShouldClose;
     int pixelSize = 10;
+    RGBA clearColor = RGBA(0, 0, 0, 255);
 
     void DrawLine(Vec2 start, Vec2 end, RGBA color);
     void DrawPixel(Vec2 position, RGBA color);

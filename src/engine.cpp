@@ -66,7 +66,7 @@ Events Engine::PollEvents(){
 }
 
 void Engine::ClearBuffer(){
-    SetRenderDrawColor(RGBA(0, 0, 0, 255));
+    SetRenderDrawColor(clearColor);
     SDL_RenderClear(m_renderer);
 }
 
