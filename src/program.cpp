@@ -41,7 +41,7 @@ void Program::DrawMap(){
     // Marching
     for(int x = 0; x < ROW_CELL_COUNT - 1; x++){
         for(int y = 0; y < ROW_CELL_COUNT - 1; y++){
-            MarchSquareAndDraw(Vec2(x, y), binaryImage);
+            MarchSquareAndDraw(Vec2(x, y), binaryImage, noise->GetNoise2D(Vec2F(x, y)));
         }
     }
 
@@ -72,7 +72,7 @@ void Program::StartNoiseTest(){
     }
 }
 
-void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage){
+void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage, double noiseValue){
     bool squareEdges[4] = {
         binaryImage.at(pos.x).at(pos.y),
         binaryImage.at(pos.x + 1).at(pos.y),
@@ -95,10 +95,10 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
     }
 
     const Vec2 LINE_POINTS[4] = {
-        Vec2(5, 1),
-        Vec2(5, 10),
-        Vec2(1, 5),
-        Vec2(10, 5)
+        Vec2(Map(noiseValue, -1, 1, 1, 5), 1),
+        Vec2(Map(noiseValue, -1, 1, 1, 5), 10),
+        Vec2(1, Map(noiseValue, -1, 1, 1, 5)),
+        Vec2(10, Map(noiseValue, -1, 1, 1, 5))
     };
 
     for(int i = 0; i < 4; i += 2){

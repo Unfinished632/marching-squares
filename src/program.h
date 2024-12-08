@@ -4,6 +4,7 @@
 
 #include "engine.h"
 #include "buildConfig.h"
+#include "noise.h"
 
 class Program{
     public:
@@ -66,7 +67,7 @@ class Program{
         {-1, -1, -1, -1}
     };
 
-    void MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage);
+    void MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage, double noiseValue);
     void DrawMap();
     bool IsEdgeConfig(bool squareEdges[4], int config);
 };
