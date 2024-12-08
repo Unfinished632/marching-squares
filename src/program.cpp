@@ -12,16 +12,19 @@ Program::~Program(){
 }
 
 void Program::Start(){
-    DrawMap();
-
     while(!m_engine->programShouldClose){
         m_engine->PollEvents();
 
-        m_engine->Wait(10);
+        DrawMap();
+        m_engine->PresentBuffer();
+
+        m_engine->Wait(100);
     }
 }
 
 void Program::DrawMap(){
+    static int offset;
+
     m_engine->ClearBuffer();
 
     SimplexNoise* noise = new SimplexNoise();
@@ -33,7 +36,7 @@ void Program::DrawMap(){
 
     for(int x = 0; x < ROW_CELL_COUNT; x++){ // 0 49
         for(int y = 0; y < ROW_CELL_COUNT; y++){
-            noiseTable.at(x).at(y) = noise->GetNoise2D(Vec2F(x, y));
+            noiseTable.at(x).at(y) = noise->GetNoise2D(Vec2F(x + offset, y));
             binaryImage.at(x).at(y) = noiseTable.at(x).at(y) >= SURFACE_LEVEL;
         }
     }
@@ -45,7 +48,7 @@ void Program::DrawMap(){
         }
     }
 
-    m_engine->PresentBuffer();
+    offset++;
 }
 
 void Program::StartNoiseTest(){
@@ -126,7 +129,7 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         std::cout << "LineEnd: " << lineEnd.x << ", " << lineEnd.y << '\n';
         std::cout << "-------------------------" << std::endl;
 
-        m_engine->DrawLine(lineStart, lineEnd, RGBA(255, 255, 255, 255));
+        m_engine->DrawLine(lineStart, lineEnd, RGBA(0, 255, 0, 255));
     }
 }
 
