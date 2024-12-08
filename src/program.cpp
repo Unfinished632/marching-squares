@@ -112,22 +112,11 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
             break;;
         }
 
-        std::cout << "Position: " << pos.x << ", " << pos.y << '\n';
-
         Vec2 lineStart = LINE_POINTS[contourStart];
         Vec2 lineEnd =  LINE_POINTS[contourEnd];
 
-        std::cout << "SquareEdges: " << squareEdges[0] << ", " << squareEdges[1] << ", " << squareEdges[2] << ", " << squareEdges[3] << '\n';
-        std::cout << "edgeConfig: " << edgeConfig << '\n';
-        std::cout << "RelativeLineStart: " << lineStart.x << ", " << lineStart.y << '\n';
-        std::cout << "RelativeLineEnd: " << lineEnd.x << ", " << lineEnd.y << '\n';
-
         lineStart = Vec2(pos.x * m_engine->pixelSize + lineStart.x, pos.y * m_engine->pixelSize + lineStart.y);
         lineEnd = Vec2(pos.x * m_engine->pixelSize + lineEnd.x, pos.y * m_engine->pixelSize + lineEnd.y);
-
-        std::cout << "LineStart: " << lineStart.x << ", " << lineStart.y << '\n';
-        std::cout << "LineEnd: " << lineEnd.x << ", " << lineEnd.y << '\n';
-        std::cout << "-------------------------" << std::endl;
 
         m_engine->DrawLine(lineStart, lineEnd, RGBA(0, 255, 0, 255));
     }
