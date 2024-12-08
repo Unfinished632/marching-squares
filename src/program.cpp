@@ -12,6 +12,8 @@ Program::~Program(){
 }
 
 void Program::Start(){
+    m_engine->clearColor = RGBA(0, 0, 100, 255);
+
     while(!m_engine->programShouldClose){
         m_engine->PollEvents();
 
