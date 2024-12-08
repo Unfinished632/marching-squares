@@ -1,5 +1,8 @@
 #pragma once
 
+//Too much math for me!
+//This guy made the functions: https://github.com/weswigham/simplex
+
 #include <cmath>
 #include "vec.h"
 
