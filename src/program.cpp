@@ -124,19 +124,6 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
     }
 }
 
-void Program::StartLineTest(){
-    while(!m_engine->programShouldClose){
-        m_engine->PollEvents();
-        m_engine->ClearBuffer();
-
-        m_engine->DrawLine(Vec2(245, 490), Vec2(49, 245), RGBA(255, 255, 255, 255));
-
-        m_engine->PresentBuffer();
-
-        m_engine->Wait(100);
-    }
-}
-
 bool Program::IsEdgeConfig(bool squareEdges[4], int config){
     for(int j = 0; j < 4; j++){
         if(squareEdges[j] != EDGE_TABLE.at(config).at(j)){

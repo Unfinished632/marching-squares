@@ -7,6 +7,7 @@ int main(int argc, char* argv[]){
     Program* program = new Program();
 
     program->Start();
+    //program->StartNoiseTest();
     delete program;
     
     PAUSE();
