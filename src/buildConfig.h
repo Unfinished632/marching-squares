@@ -1,4 +1,4 @@
 #pragma once
 
-#define WINDOWSIZEX 1000
-#define WINDOWSIZEY 500
+#define WINDOWSIZEX 1280
+#define WINDOWSIZEY 900
