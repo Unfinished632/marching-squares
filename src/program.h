@@ -16,10 +16,11 @@ class Program{
     private:
     Engine* m_engine = new Engine();
     SimplexNoise* noise = new SimplexNoise();
-    const unsigned int ROW_CELL_COUNT = WINDOWSIZEX / m_engine->pixelSize + 1;
-    const double SURFACE_LEVEL = 0.2;
 
     bool interpolate = true;
+    int cellSize = 10;
+    unsigned int rowCellCount = WINDOWSIZEX / cellSize + 1;
+    float surfaceLevel = 0.2;
 
     /*
     1------2

@@ -31,6 +31,10 @@ void Program::ShowSettingsWindow(){
     ImGui::Begin("Settings");
 
     ImGui::Checkbox("Linear Interpolation", &interpolate);
+    ImGui::SliderInt("Square Size", &cellSize, 10, 100);
+    ImGui::SliderFloat("Surface Level", &surfaceLevel, -1, 1);
+
+    rowCellCount = WINDOWSIZEX / cellSize + 1;
 
     ImGui::End();
 }
@@ -38,17 +42,17 @@ void Program::ShowSettingsWindow(){
 void Program::DrawMap(){
     m_engine->ClearBuffer();
 
-    std::vector<std::vector<bool>> binaryImage(ROW_CELL_COUNT, std::vector<bool>(ROW_CELL_COUNT, 0));
+    std::vector<std::vector<bool>> binaryImage(rowCellCount, std::vector<bool>(rowCellCount, 0));
 
-    for(int x = 0; x < ROW_CELL_COUNT; x++){ // 0 49
-        for(int y = 0; y < ROW_CELL_COUNT; y++){
-            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x, y)) >= SURFACE_LEVEL;
+    for(int x = 0; x < rowCellCount; x++){ // 0 49
+        for(int y = 0; y < rowCellCount; y++){
+            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x, y)) >= surfaceLevel;
         }
     }
 
     // Marching
-    for(int x = 0; x < ROW_CELL_COUNT - 1; x++){
-        for(int y = 0; y < ROW_CELL_COUNT - 1; y++){
+    for(int x = 0; x < rowCellCount - 1; x++){
+        for(int y = 0; y < rowCellCount - 1; y++){
             MarchSquareAndDraw(Vec2(x, y), binaryImage);
         }
     }
@@ -101,10 +105,10 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
     }
 
     Vec2 LINE_POINTS[4] = {
-        Vec2(5, 1),
-        Vec2(5, 10),
-        Vec2(1 ,5),
-        Vec2(10 ,5)
+        Vec2(cellSize / 2, 1),
+        Vec2(cellSize / 2, cellSize),
+        Vec2(1 ,cellSize / 2),
+        Vec2(cellSize ,cellSize / 2)
     };
 
     if(interpolate){
@@ -116,16 +120,16 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         };
 
         const double ESTIMATED_VALUES[4] = {
-            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[1] - CORNER_VALUES[0])),
-            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[2]) / (CORNER_VALUES[3] - CORNER_VALUES[2])),
-            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[2] - CORNER_VALUES[0])),
-            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[1]) / (CORNER_VALUES[3] - CORNER_VALUES[1]))
+            std::lerp(1, cellSize, (surfaceLevel - CORNER_VALUES[0]) / (CORNER_VALUES[1] - CORNER_VALUES[0])),
+            std::lerp(1, cellSize, (surfaceLevel - CORNER_VALUES[2]) / (CORNER_VALUES[3] - CORNER_VALUES[2])),
+            std::lerp(1, cellSize, (surfaceLevel - CORNER_VALUES[0]) / (CORNER_VALUES[2] - CORNER_VALUES[0])),
+            std::lerp(1, cellSize, (surfaceLevel - CORNER_VALUES[1]) / (CORNER_VALUES[3] - CORNER_VALUES[1]))
         };
 
         LINE_POINTS[0] = Vec2(ESTIMATED_VALUES[0], 1);
-        LINE_POINTS[1] = Vec2(ESTIMATED_VALUES[1], 10);
+        LINE_POINTS[1] = Vec2(ESTIMATED_VALUES[1], cellSize);
         LINE_POINTS[2] = Vec2(1 ,ESTIMATED_VALUES[2]);
-        LINE_POINTS[3] = Vec2(10 ,ESTIMATED_VALUES[3]);
+        LINE_POINTS[3] = Vec2(cellSize ,ESTIMATED_VALUES[3]);
     }
 
     for(int i = 0; i < 4; i += 2){
@@ -139,8 +143,8 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         Vec2 lineStart = LINE_POINTS[contourStart];
         Vec2 lineEnd =  LINE_POINTS[contourEnd];
 
-        lineStart = Vec2(pos.x * m_engine->pixelSize + lineStart.x, pos.y * m_engine->pixelSize + lineStart.y);
-        lineEnd = Vec2(pos.x * m_engine->pixelSize + lineEnd.x, pos.y * m_engine->pixelSize + lineEnd.y);
+        lineStart = Vec2(pos.x * cellSize + lineStart.x, pos.y * cellSize + lineStart.y);
+        lineEnd = Vec2(pos.x * cellSize + lineEnd.x, pos.y * cellSize + lineEnd.y);
 
         m_engine->DrawLine(lineStart, lineEnd, RGBA(0, 255, 0, 255));
     }
