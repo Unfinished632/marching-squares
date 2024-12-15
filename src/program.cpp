@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
+#include <cmath>
 
 #include "program.h"
 #include "buildConfig.h"
@@ -25,16 +26,10 @@ void Program::Start(){
 }
 
 void Program::DrawMap(){
-    static int offset;
-
     m_engine->ClearBuffer();
-
-    SimplexNoise* noise = new SimplexNoise();
 
     std::vector<std::vector<double>> noiseTable(ROW_CELL_COUNT, std::vector<double>(ROW_CELL_COUNT, 0));
     std::vector<std::vector<bool>> binaryImage(ROW_CELL_COUNT, std::vector<bool>(ROW_CELL_COUNT, 0));
-
-    const double SURFACE_LEVEL = 0.3;
 
     for(int x = 0; x < ROW_CELL_COUNT; x++){ // 0 49
         for(int y = 0; y < ROW_CELL_COUNT; y++){
@@ -46,7 +41,7 @@ void Program::DrawMap(){
     // Marching
     for(int x = 0; x < ROW_CELL_COUNT - 1; x++){
         for(int y = 0; y < ROW_CELL_COUNT - 1; y++){
-            MarchSquareAndDraw(Vec2(x, y), binaryImage, noise->GetNoise2D(Vec2F(x, y)));
+            MarchSquareAndDraw(Vec2(x, y), binaryImage);
         }
     }
 
@@ -77,7 +72,7 @@ void Program::StartNoiseTest(){
     }
 }
 
-void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage, double noiseValue){
+void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage){
     bool squareEdges[4] = {
         binaryImage.at(pos.x).at(pos.y),
         binaryImage.at(pos.x + 1).at(pos.y),
@@ -99,13 +94,29 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         return;
     }
 
-    const Vec2 LINE_POINTS[4] = {
-        Vec2(Map(noiseValue, -1, 1, 1, 5), 1),
-        Vec2(Map(noiseValue, -1, 1, 1, 5), 10),
-        Vec2(1, Map(noiseValue, -1, 1, 1, 5)),
-        Vec2(10, Map(noiseValue, -1, 1, 1, 5))
+    const double EDGE_VALUES[4] = {
+        noise->GetNoise2D(Vec2F(pos.x + offset, pos.y)),
+        noise->GetNoise2D(Vec2F(pos.x + 1 + offset, pos.y)),
+        noise->GetNoise2D(Vec2F(pos.x + offset, pos.y + 1)),
+        noise->GetNoise2D(Vec2F(pos.x + 1 + offset, pos.y + 1))
     };
 
+    //const double SCOPED_DOWN_SURFACE_LEVEL = Map(SURFACE_LEVEL, -1, 1, 0, 1);
+
+    const double ESTIMATED_VALUES[4] = {
+        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[0]) / (EDGE_VALUES[1] - EDGE_VALUES[0])),
+        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[2]) / (EDGE_VALUES[3] - EDGE_VALUES[2])),
+        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[0]) / (EDGE_VALUES[2] - EDGE_VALUES[0])),
+        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[1]) / (EDGE_VALUES[3] - EDGE_VALUES[1]))
+    };
+
+    const Vec2 LINE_POINTS[4] = {
+        Vec2(ESTIMATED_VALUES[0], 1),
+        Vec2(ESTIMATED_VALUES[1], 10),
+        Vec2(1 ,ESTIMATED_VALUES[2]),
+        Vec2(10 ,ESTIMATED_VALUES[3])
+    };
+    
     for(int i = 0; i < 4; i += 2){
         short contourStart = CONTOUR_TABLE.at(edgeConfig).at(i);
         short contourEnd = CONTOUR_TABLE.at(edgeConfig).at(i + 1);
@@ -132,4 +143,9 @@ bool Program::IsEdgeConfig(bool squareEdges[4], int config){
     }
 
     return true;
+}
+
+void Program::StartLerpTest(){
+    std::cout << std::lerp(-10, 10, 0.1) << '\n';
+    std::cout << std::lerp(10, -10, 0.1) << '\n';
 }

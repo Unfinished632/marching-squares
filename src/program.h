@@ -12,10 +12,14 @@ class Program{
 
     void Start();
     void StartNoiseTest();
+    void StartLerpTest();
 
     private:
     Engine* m_engine = new Engine();
+    SimplexNoise* noise = new SimplexNoise();
     const unsigned int ROW_CELL_COUNT = WINDOWSIZEX / m_engine->pixelSize + 1;
+    const double SURFACE_LEVEL = 0.2;
+    int offset;
     /*
     1------2
     |      |
@@ -66,7 +70,7 @@ class Program{
         {-1, -1, -1, -1}
     };
 
-    void MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage, double noiseValue);
+    void MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage);
     void DrawMap();
     bool IsEdgeConfig(bool squareEdges[4], int config);
 };
