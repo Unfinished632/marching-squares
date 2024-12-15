@@ -34,6 +34,9 @@ void Program::ShowSettingsWindow(){
     ImGui::SliderInt("Square Size", &cellSize, 10, 100);
     ImGui::SliderFloat("Surface Level", &surfaceLevel, -1, 1);
 
+    ImGui::SliderInt("X Position", &offset.x, 0, 220);
+    ImGui::SliderInt("Y Position", &offset.y, 0, 220);
+
     rowCellCount = WINDOWSIZEX / cellSize + 1;
 
     ImGui::End();
@@ -46,7 +49,7 @@ void Program::DrawMap(){
 
     for(int x = 0; x < rowCellCount; x++){ // 0 49
         for(int y = 0; y < rowCellCount; y++){
-            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x, y)) >= surfaceLevel;
+            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x + offset.x, y + offset.y)) >= surfaceLevel;
         }
     }
 
@@ -113,10 +116,10 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
 
     if(interpolate){
         const double CORNER_VALUES[4] = {
-            noise->GetNoise2D(Vec2F(pos.x, pos.y)),
-            noise->GetNoise2D(Vec2F(pos.x + 1, pos.y)),
-            noise->GetNoise2D(Vec2F(pos.x, pos.y + 1)),
-            noise->GetNoise2D(Vec2F(pos.x + 1, pos.y + 1))
+            noise->GetNoise2D(Vec2F(pos.x + offset.x, pos.y + offset.y)),
+            noise->GetNoise2D(Vec2F(pos.x + 1 + offset.x, pos.y + offset.y)),
+            noise->GetNoise2D(Vec2F(pos.x + offset.x, pos.y + 1 + offset.y)),
+            noise->GetNoise2D(Vec2F(pos.x + 1 + offset.x, pos.y + 1 + offset.y))
         };
 
         const double ESTIMATED_VALUES[4] = {

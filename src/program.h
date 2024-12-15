@@ -21,6 +21,10 @@ class Program{
     int cellSize = 10;
     unsigned int rowCellCount = WINDOWSIZEX / cellSize + 1;
     float surfaceLevel = 0.2;
+    Vec2 offset = {
+        0,
+        0
+    };
 
     /*
     1------2
