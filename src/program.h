@@ -12,7 +12,6 @@ class Program{
 
     void Start();
     void StartNoiseTest();
-    void StartLerpTest();
 
     private:
     Engine* m_engine = new Engine();

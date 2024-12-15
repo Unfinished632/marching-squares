@@ -8,7 +8,6 @@ int main(int argc, char* argv[]){
 
     program->Start();
     //program->StartMapTest();
-    //program->StartLerpTest();
     delete program;
     
     PAUSE();

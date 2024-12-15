@@ -116,7 +116,7 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         Vec2(1 ,ESTIMATED_VALUES[2]),
         Vec2(10 ,ESTIMATED_VALUES[3])
     };
-    
+
     for(int i = 0; i < 4; i += 2){
         short contourStart = CONTOUR_TABLE.at(edgeConfig).at(i);
         short contourEnd = CONTOUR_TABLE.at(edgeConfig).at(i + 1);
@@ -143,9 +143,4 @@ bool Program::IsEdgeConfig(bool squareEdges[4], int config){
     }
 
     return true;
-}
-
-void Program::StartLerpTest(){
-    std::cout << std::lerp(-10, 10, 0.1) << '\n';
-    std::cout << std::lerp(10, -10, 0.1) << '\n';
 }
