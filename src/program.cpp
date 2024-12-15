@@ -28,13 +28,11 @@ void Program::Start(){
 void Program::DrawMap(){
     m_engine->ClearBuffer();
 
-    std::vector<std::vector<double>> noiseTable(ROW_CELL_COUNT, std::vector<double>(ROW_CELL_COUNT, 0));
     std::vector<std::vector<bool>> binaryImage(ROW_CELL_COUNT, std::vector<bool>(ROW_CELL_COUNT, 0));
 
     for(int x = 0; x < ROW_CELL_COUNT; x++){ // 0 49
         for(int y = 0; y < ROW_CELL_COUNT; y++){
-            noiseTable.at(x).at(y) = noise->GetNoise2D(Vec2F(x + offset, y));
-            binaryImage.at(x).at(y) = noiseTable.at(x).at(y) >= SURFACE_LEVEL;
+            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x + offset, y)) >= SURFACE_LEVEL;
         }
     }
 
@@ -94,20 +92,18 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         return;
     }
 
-    const double EDGE_VALUES[4] = {
+    const double CORNER_VALUES[4] = {
         noise->GetNoise2D(Vec2F(pos.x + offset, pos.y)),
         noise->GetNoise2D(Vec2F(pos.x + 1 + offset, pos.y)),
         noise->GetNoise2D(Vec2F(pos.x + offset, pos.y + 1)),
         noise->GetNoise2D(Vec2F(pos.x + 1 + offset, pos.y + 1))
     };
 
-    //const double SCOPED_DOWN_SURFACE_LEVEL = Map(SURFACE_LEVEL, -1, 1, 0, 1);
-
     const double ESTIMATED_VALUES[4] = {
-        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[0]) / (EDGE_VALUES[1] - EDGE_VALUES[0])),
-        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[2]) / (EDGE_VALUES[3] - EDGE_VALUES[2])),
-        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[0]) / (EDGE_VALUES[2] - EDGE_VALUES[0])),
-        std::lerp(1, 10, (SURFACE_LEVEL - EDGE_VALUES[1]) / (EDGE_VALUES[3] - EDGE_VALUES[1]))
+        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[1] - CORNER_VALUES[0])),
+        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[2]) / (CORNER_VALUES[3] - CORNER_VALUES[2])),
+        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[2] - CORNER_VALUES[0])),
+        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[1]) / (CORNER_VALUES[3] - CORNER_VALUES[1]))
     };
 
     const Vec2 LINE_POINTS[4] = {
