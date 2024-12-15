@@ -37,7 +37,8 @@ void Program::ShowSettingsWindow(){
     ImGui::SliderInt("X Position", &offset.x, 0, 220);
     ImGui::SliderInt("Y Position", &offset.y, 0, 220);
 
-    rowCellCount = WINDOWSIZEX / cellSize + 1;
+    rowCellCount.x = WINDOWSIZEX / cellSize + 1;
+    rowCellCount.y = WINDOWSIZEY / cellSize + 1;
 
     ImGui::End();
 }
@@ -45,17 +46,17 @@ void Program::ShowSettingsWindow(){
 void Program::DrawMap(){
     m_engine->ClearBuffer();
 
-    std::vector<std::vector<bool>> binaryImage(rowCellCount, std::vector<bool>(rowCellCount, 0));
+    std::vector<std::vector<bool>> binaryImage(rowCellCount.x, std::vector<bool>(rowCellCount.y, 0));
 
-    for(int x = 0; x < rowCellCount; x++){ // 0 49
-        for(int y = 0; y < rowCellCount; y++){
+    for(int x = 0; x < rowCellCount.x; x++){ // 0 49
+        for(int y = 0; y < rowCellCount.y; y++){
             binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x + offset.x, y + offset.y)) >= surfaceLevel;
         }
     }
 
     // Marching
-    for(int x = 0; x < rowCellCount - 1; x++){
-        for(int y = 0; y < rowCellCount - 1; y++){
+    for(int x = 0; x < rowCellCount.x - 1; x++){
+        for(int y = 0; y < rowCellCount.y - 1; y++){
             MarchSquareAndDraw(Vec2(x, y), binaryImage);
         }
     }

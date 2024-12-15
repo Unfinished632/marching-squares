@@ -19,7 +19,10 @@ class Program{
 
     bool interpolate = true;
     int cellSize = 10;
-    unsigned int rowCellCount = WINDOWSIZEX / cellSize + 1;
+    Vec2 rowCellCount = {
+        WINDOWSIZEX / cellSize + 1,
+        WINDOWSIZEY / cellSize + 1,
+    };
     float surfaceLevel = 0.2;
     Vec2 offset = {
         0,
