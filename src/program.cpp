@@ -100,26 +100,33 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
         return;
     }
 
-    const double CORNER_VALUES[4] = {
-        noise->GetNoise2D(Vec2F(pos.x, pos.y)),
-        noise->GetNoise2D(Vec2F(pos.x + 1, pos.y)),
-        noise->GetNoise2D(Vec2F(pos.x, pos.y + 1)),
-        noise->GetNoise2D(Vec2F(pos.x + 1, pos.y + 1))
+    Vec2 LINE_POINTS[4] = {
+        Vec2(5, 1),
+        Vec2(5, 10),
+        Vec2(1 ,5),
+        Vec2(10 ,5)
     };
 
-    const double ESTIMATED_VALUES[4] = {
-        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[1] - CORNER_VALUES[0])),
-        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[2]) / (CORNER_VALUES[3] - CORNER_VALUES[2])),
-        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[2] - CORNER_VALUES[0])),
-        std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[1]) / (CORNER_VALUES[3] - CORNER_VALUES[1]))
-    };
+    if(interpolate){
+        const double CORNER_VALUES[4] = {
+            noise->GetNoise2D(Vec2F(pos.x, pos.y)),
+            noise->GetNoise2D(Vec2F(pos.x + 1, pos.y)),
+            noise->GetNoise2D(Vec2F(pos.x, pos.y + 1)),
+            noise->GetNoise2D(Vec2F(pos.x + 1, pos.y + 1))
+        };
 
-    const Vec2 LINE_POINTS[4] = {
-        Vec2(ESTIMATED_VALUES[0], 1),
-        Vec2(ESTIMATED_VALUES[1], 10),
-        Vec2(1 ,ESTIMATED_VALUES[2]),
-        Vec2(10 ,ESTIMATED_VALUES[3])
-    };
+        const double ESTIMATED_VALUES[4] = {
+            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[1] - CORNER_VALUES[0])),
+            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[2]) / (CORNER_VALUES[3] - CORNER_VALUES[2])),
+            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[0]) / (CORNER_VALUES[2] - CORNER_VALUES[0])),
+            std::lerp(1, 10, (SURFACE_LEVEL - CORNER_VALUES[1]) / (CORNER_VALUES[3] - CORNER_VALUES[1]))
+        };
+
+        LINE_POINTS[0] = Vec2(ESTIMATED_VALUES[0], 1);
+        LINE_POINTS[1] = Vec2(ESTIMATED_VALUES[1], 10);
+        LINE_POINTS[2] = Vec2(1 ,ESTIMATED_VALUES[2]);
+        LINE_POINTS[3] = Vec2(10 ,ESTIMATED_VALUES[3]);
+    }
 
     for(int i = 0; i < 4; i += 2){
         short contourStart = CONTOUR_TABLE.at(edgeConfig).at(i);
