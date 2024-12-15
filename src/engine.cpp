@@ -1,6 +1,9 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_sdlrenderer2.h>
 
 #include "engine.h"
 #include "macros.h"
@@ -28,12 +31,25 @@ Engine::Engine(){
         PAUSE();
         throw -1;
     }
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+
+    ImGui_ImplSDL2_InitForSDLRenderer(m_window, m_renderer);
+    ImGui_ImplSDLRenderer2_Init(m_renderer);
+
+    ImGui::StyleColorsDark();
 }
 
 Engine::~Engine(){
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
+
+    ImGui_ImplSDLRenderer2_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void Engine::DrawLine(Vec2 start, Vec2 end, RGBA color){
@@ -48,6 +64,10 @@ void Engine::DrawPixel(Vec2 position, RGBA color){
 }
 
 Events Engine::PollEvents(){
+    ImGui_ImplSDLRenderer2_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
     SDL_Event event;
     std::vector<SDL_Keycode>* keys = new std::vector<SDL_Keycode>;
 
@@ -60,9 +80,18 @@ Events Engine::PollEvents(){
                 keys->push_back(event.key.keysym.sym);
                 break;
         }
+
+        ImGui_ImplSDL2_ProcessEvent(&event);
     }while(SDL_PollEvent(&event) != 0);
 
     return Events{.keys = keys};
+}
+
+void Engine::PresentBuffer(){
+    ImGui::Render();
+    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), m_renderer);
+
+    SDL_RenderPresent(m_renderer);
 }
 
 void Engine::ClearBuffer(){

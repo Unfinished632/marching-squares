@@ -18,7 +18,9 @@ class Program{
     SimplexNoise* noise = new SimplexNoise();
     const unsigned int ROW_CELL_COUNT = WINDOWSIZEX / m_engine->pixelSize + 1;
     const double SURFACE_LEVEL = 0.2;
-    int offset;
+
+    bool interpolate = true;
+
     /*
     1------2
     |      |
@@ -72,4 +74,5 @@ class Program{
     void MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binaryImage);
     void DrawMap();
     bool IsEdgeConfig(bool squareEdges[4], int config);
+    void ShowSettingsWindow();
 };

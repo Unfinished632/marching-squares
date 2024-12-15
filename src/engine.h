@@ -37,7 +37,7 @@ class Engine{
     void Wait(Uint32 milliseconds);
     Events PollEvents();
 
-    inline void PresentBuffer(){ SDL_RenderPresent(m_renderer); }
+    void PresentBuffer();
 
     private:
     SDL_Window* m_window = NULL;

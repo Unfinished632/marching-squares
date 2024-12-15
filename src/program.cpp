@@ -2,6 +2,7 @@
 #include <ostream>
 #include <vector>
 #include <cmath>
+#include <imgui.h>
 
 #include "program.h"
 #include "buildConfig.h"
@@ -19,10 +20,19 @@ void Program::Start(){
         m_engine->PollEvents();
 
         DrawMap();
+        ShowSettingsWindow();
         m_engine->PresentBuffer();
 
-        m_engine->Wait(100);
+        m_engine->Wait(10);
     }
+}
+
+void Program::ShowSettingsWindow(){
+    ImGui::Begin("Settings");
+
+    ImGui::Checkbox("Linear Interpolation", &interpolate);
+
+    ImGui::End();
 }
 
 void Program::DrawMap(){
@@ -32,7 +42,7 @@ void Program::DrawMap(){
 
     for(int x = 0; x < ROW_CELL_COUNT; x++){ // 0 49
         for(int y = 0; y < ROW_CELL_COUNT; y++){
-            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x + offset, y)) >= SURFACE_LEVEL;
+            binaryImage.at(x).at(y) = noise->GetNoise2D(Vec2F(x, y)) >= SURFACE_LEVEL;
         }
     }
 
@@ -42,8 +52,6 @@ void Program::DrawMap(){
             MarchSquareAndDraw(Vec2(x, y), binaryImage);
         }
     }
-
-    offset++;
 }
 
 void Program::StartNoiseTest(){
@@ -93,10 +101,10 @@ void Program::MarchSquareAndDraw(Vec2 pos, std::vector<std::vector<bool>>& binar
     }
 
     const double CORNER_VALUES[4] = {
-        noise->GetNoise2D(Vec2F(pos.x + offset, pos.y)),
-        noise->GetNoise2D(Vec2F(pos.x + 1 + offset, pos.y)),
-        noise->GetNoise2D(Vec2F(pos.x + offset, pos.y + 1)),
-        noise->GetNoise2D(Vec2F(pos.x + 1 + offset, pos.y + 1))
+        noise->GetNoise2D(Vec2F(pos.x, pos.y)),
+        noise->GetNoise2D(Vec2F(pos.x + 1, pos.y)),
+        noise->GetNoise2D(Vec2F(pos.x, pos.y + 1)),
+        noise->GetNoise2D(Vec2F(pos.x + 1, pos.y + 1))
     };
 
     const double ESTIMATED_VALUES[4] = {
