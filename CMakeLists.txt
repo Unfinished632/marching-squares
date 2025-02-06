@@ -21,7 +21,7 @@ if (STATIC_BUILD)
 endif()
 
 add_subdirectory(thirdparty/imgui-docking)
-add_subdirectory(thirdparty/SDL)
+add_subdirectory(thirdparty/SDL2)
 
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
